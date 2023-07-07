@@ -43,7 +43,7 @@ def main_func(modulePath):
             print(f"Reboot required at : {thisDateTime}")
             print("Reboot required!")
             
-            # Add additional functions here when script detects a pending reboot
+            # Add additional functions here to execute when script detects a pending reboot
             
             break
 
