@@ -39,12 +39,28 @@ def main_func(modulePath):
         thisDateTime_String = str(thisRow).split()[0].strip() + " " + str(thisRow).split()[1].strip().split(".")[0].strip()
         thisDateTime = datetime.datetime.strptime(thisDateTime_String, "%Y/%m/%d %H:%M:%S")
         if strToFindRestart in thisRow and thisDateTime > lastRebootDateTime:
-            print(f"Last reboot : {lastRebootDateTime}")
-            print(f"Reboot required at : {thisDateTime}")
-            print("Reboot required!")
+            curr_time = datetime.datetime.now()
+            ping_timedelta = 0
             
-            # Add additional functions here to execute when script detects a pending reboot
+            try:
+                stored_time_str = ""
+                with open(Path.joinpath(modulePath, "Restart_Ping.txt"), 'r') as file:
+                    stored_time_str = file.read()
+                stored_time_str = datetime.datetime.strptime(stored_time_str, "%Y-%m-%d %H:%M:%S.%f")
+                ping_timedelta = curr_time - stored_time_str
+                ping_timedelta = ping_timedelta.total_seconds()/60/60
+            except:
+                with open(Path.joinpath(modulePath, "Restart_Ping.txt"), 'w') as file:
+                    file.write(str(curr_time))
             
+            if ping_timedelta >= 3: # Will ping if last ping was atleast 3 hours later. Helps reduce spamming
+                print(f"Last reboot : {lastRebootDateTime}")
+                print(f"Reboot required at : {thisDateTime}")
+                print("Reboot required!")
+                # Add additional functions here to execute when script detects a pending reboot
+                
+                with open(Path.joinpath(modulePath, "Restart_Ping.txt"), 'w') as file:
+                    file.write(str(curr_time))
             break
 
 
